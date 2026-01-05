@@ -2,21 +2,22 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Domain.Models.Entities
 {
-    public class TicketComment : BaseEntity<int>
+    public class Engineer : BaseAuditableEntity<int>
     {
-
+        [Required]
+        [MaxLength(100)]
+        public string Name { get; set; }
 
         [Required]
-        [MaxLength(1000)]
-        public string Content { get; set; }
-        public int TicketId { get; set; }
-        public Ticket Ticket { get; set; }
+        [EmailAddress]
+        public string Email { get; set; }
+
+        public ICollection<Ticket> Tickets { get; set; }
     }
 }

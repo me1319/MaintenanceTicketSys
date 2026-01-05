@@ -26,8 +26,8 @@ namespace Persistence.Repositories
                 return trackChanges ?
                     await _context.Tickets.Include(T => T.Attachments)
                                           .Include(T => T.Comments)
-                                          .ToListAsync() as IEnumerable<TEntity> :
-                    await _context.Tickets.Include(T => T.Attachments)
+                                          .ToListAsync() as IEnumerable<TEntity>
+                                          :await _context.Tickets.Include(T => T.Attachments)
                                           .Include(T => T.Comments)
                                           .AsNoTracking()
                                           .ToListAsync() as IEnumerable<TEntity>;
@@ -36,23 +36,32 @@ namespace Persistence.Repositories
                 await _context.Set<TEntity>().ToListAsync()
                 : await _context.Set<TEntity>().AsNoTracking().ToListAsync();
         }
-        public Task<TEntity> GetAsync(TKey id)
+        public async Task<TEntity> GetAsync(TKey id)
         {
-            throw new NotImplementedException();
+            if (typeof(TEntity) == typeof(Ticket))
+            {
+                return 
+                    await _context.Tickets.Include(T=>T.Attachments)
+                                          .Include(T=>T.Comments)
+                                          .FirstOrDefaultAsync(T => T.Id.Equals(id)) as TEntity;
+            }
+            return await _context.Set<TEntity>().FindAsync(id);
+
         }
-        public Task AddAsync(TEntity entity)
+        async Task IGenericRepository<TEntity, TKey>.AddAsync(TEntity entity)
         {
-            throw new NotImplementedException();
+            await _context.AddAsync(entity);
         }
 
-        public void Delete(TEntity entity)
+        void IGenericRepository<TEntity, TKey>.Update(TEntity entity)
         {
-            throw new NotImplementedException();
+            _context.Update(entity);
         }
 
-        public void Update(TEntity entity)
+        void IGenericRepository<TEntity, TKey>.Delete(TEntity entity)
         {
-            throw new NotImplementedException();
+            _context.Remove(entity);
         }
+
     }
 }

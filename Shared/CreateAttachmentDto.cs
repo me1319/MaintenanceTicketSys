@@ -1,15 +1,13 @@
-﻿using Domain.Models.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Models.Entities
+namespace Shared
 {
-    public class TicketAttachment : BaseEntity<int>
+    public class CreateAttachmentDto
     {
         [Required]
         [MaxLength(255)]
@@ -21,8 +19,5 @@ namespace Domain.Models.Entities
 
         [Required]
         public string FilePath { get; set; }
-        public int TicketId { get; set; }
-        public Ticket Ticket { get; set; }
-
     }
 }

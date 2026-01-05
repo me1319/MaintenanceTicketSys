@@ -1,22 +1,20 @@
 ﻿using Domain.Models.Common;
+using Domain.Models.Enums;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Domain.Models.Entities
 {
-    public class TicketComment : BaseEntity<int>
+    public class TicketStatusHistory : BaseEntity<int>
     {
-
-
-        [Required]
-        [MaxLength(1000)]
-        public string Content { get; set; }
         public int TicketId { get; set; }
+        public TicketStatus OldStatus { get; set; }
+        public TicketStatus NewStatus { get; set; }
+        public DateTime ChangedOn { get; set; }
+
         public Ticket Ticket { get; set; }
     }
 }
