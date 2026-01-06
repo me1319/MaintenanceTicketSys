@@ -27,7 +27,7 @@ namespace Persistence.Repositories
                     await _context.Tickets.Include(T => T.Attachments)
                                           .Include(T => T.Comments)
                                           .ToListAsync() as IEnumerable<TEntity>
-                                          :await _context.Tickets.Include(T => T.Attachments)
+                                          : await _context.Tickets.Include(T => T.Attachments)
                                           .Include(T => T.Comments)
                                           .AsNoTracking()
                                           .ToListAsync() as IEnumerable<TEntity>;
@@ -40,9 +40,9 @@ namespace Persistence.Repositories
         {
             if (typeof(TEntity) == typeof(Ticket))
             {
-                return 
-                    await _context.Tickets.Include(T=>T.Attachments)
-                                          .Include(T=>T.Comments)
+                return
+                    await _context.Tickets.Include(T => T.Attachments)
+                                          .Include(T => T.Comments)
                                           .FirstOrDefaultAsync(T => T.Id.Equals(id)) as TEntity;
             }
             return await _context.Set<TEntity>().FindAsync(id);
@@ -64,4 +64,5 @@ namespace Persistence.Repositories
         }
 
     }
+
 }

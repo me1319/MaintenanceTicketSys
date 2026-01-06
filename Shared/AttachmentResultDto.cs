@@ -25,4 +25,5 @@ namespace Shared
         [Required]
         public string FilePath { get; set; }
     }
+
 }

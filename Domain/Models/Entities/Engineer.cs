@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Models.Entities
 {
-    public class Engineer : BaseAuditableEntity<int>
+    public class Engineer : BaseEntity<int>
     {
         [Required]
         [MaxLength(100)]

@@ -12,7 +12,8 @@ namespace Services.Abstraction
     {
         Task<IEnumerable<TicketResultDto>> GetAllTicketsAsync();
         Task<TicketResultDto?> GetTicketByIdAsync(int id);
-
+        Task<IEnumerable<AttachmentResultDto>> GetAllAttachmentsAsync();
+        Task<IEnumerable<CommentResultDto>> GetAllCommentsAsync();
         Task<int> CreateTicketAsync(CreateTicketDto dto);
         Task AssignEngineerAsync(int ticketId, int engineerId);
         Task ChangeStatusAsync(int ticketId, TicketStatus newStatus);
@@ -20,7 +21,7 @@ namespace Services.Abstraction
         Task AddCommentAsync(int ticketId, string content);
         Task AddAttachmentAsync(int ticketId, CreateAttachmentDto dto);
 
-        Task<IEnumerable<AttachmentResultDto>> GetAllAttachmentsAsync();
-        Task<IEnumerable<CommentResultDto>> GetAllCommentsAsync();
+ 
     }
+
 }

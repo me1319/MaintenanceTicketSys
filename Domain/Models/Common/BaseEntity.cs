@@ -10,4 +10,5 @@ namespace Domain.Models.Common
     {
         public TKey Id { get; set; }
     }
+
 }

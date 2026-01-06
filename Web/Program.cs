@@ -7,13 +7,14 @@ using Persistence;
 using Persistence.Data;
 using Services;
 using Services.Abstraction;
+using System;
 using Mapping =Services.MappingProfile;
 
 namespace Web
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static  void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,7 @@ namespace Web
             builder.Services.AddDbContext<MaintenanceTicketSysDbContext>(options =>
                     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
             builder.Services.AddAutoMapper(cfg => {
                 // optional inline config
             }, typeof(AssemblyReference).Assembly);
@@ -40,6 +42,7 @@ namespace Web
 
 
             var app = builder.Build();
+
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

@@ -19,4 +19,5 @@ namespace Shared
         public string Content { get; set; }
 
     }
+
 }

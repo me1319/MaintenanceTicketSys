@@ -15,7 +15,9 @@ namespace Persistence.Data
         { }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<TicketAttachment> TicketAttachments { get; set; }
+        public DbSet<Engineer> Engineers { get; set; }
         public DbSet<TicketComment> TicketComments { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

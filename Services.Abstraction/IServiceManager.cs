@@ -10,4 +10,5 @@ namespace Services.Abstraction
     {
         ITicketService TicketService { get; }
     }
+
 }

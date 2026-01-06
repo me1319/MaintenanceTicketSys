@@ -9,8 +9,9 @@ using System.Threading.Tasks;
 
 namespace Services
 {
-    public class ServiceManager(IUnitOfWork unitOfWork,IMapper mapper) : IServiceManager
+    public class ServiceManager(IUnitOfWork unitOfWork, IMapper mapper) : IServiceManager
     {
         public ITicketService TicketService { get; } = new TicketServices(unitOfWork, mapper);
     }
+
 }

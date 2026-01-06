@@ -12,8 +12,8 @@ using Persistence.Data;
 namespace Persistence.Data.Migrations
 {
     [DbContext(typeof(MaintenanceTicketSysDbContext))]
-    [Migration("20260105115115_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260106115100_initialMigrations")]
+    partial class initialMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,28 @@ namespace Persistence.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Domain.Models.Entities.Engineer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Engineers");
+                });
 
             modelBuilder.Entity("Domain.Models.Entities.Ticket", b =>
                 {
@@ -47,6 +69,9 @@ namespace Persistence.Data.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
 
+                    b.Property<int?>("EngineerId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("InProgressAt")
                         .HasColumnType("datetime2");
 
@@ -65,6 +90,8 @@ namespace Persistence.Data.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EngineerId");
 
                     b.ToTable("Tickets");
                 });
@@ -124,6 +151,13 @@ namespace Persistence.Data.Migrations
                     b.ToTable("TicketComments");
                 });
 
+            modelBuilder.Entity("Domain.Models.Entities.Ticket", b =>
+                {
+                    b.HasOne("Domain.Models.Entities.Engineer", null)
+                        .WithMany("Tickets")
+                        .HasForeignKey("EngineerId");
+                });
+
             modelBuilder.Entity("Domain.Models.Entities.TicketAttachment", b =>
                 {
                     b.HasOne("Domain.Models.Entities.Ticket", "Ticket")
@@ -144,6 +178,11 @@ namespace Persistence.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Ticket");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Engineer", b =>
+                {
+                    b.Navigation("Tickets");
                 });
 
             modelBuilder.Entity("Domain.Models.Entities.Ticket", b =>

@@ -6,11 +6,25 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Persistence.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class initialMigrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Engineers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Engineers", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Tickets",
                 columns: table => new
@@ -25,11 +39,17 @@ namespace Persistence.Data.Migrations
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     InProgressAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ResolvedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ClosedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ClosedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    EngineerId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Tickets", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Tickets_Engineers_EngineerId",
+                        column: x => x.EngineerId,
+                        principalTable: "Engineers",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -83,6 +103,11 @@ namespace Persistence.Data.Migrations
                 name: "IX_TicketComments_TicketId",
                 table: "TicketComments",
                 column: "TicketId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tickets_EngineerId",
+                table: "Tickets",
+                column: "EngineerId");
         }
 
         /// <inheritdoc />
@@ -96,6 +121,9 @@ namespace Persistence.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Tickets");
+
+            migrationBuilder.DropTable(
+                name: "Engineers");
         }
     }
 }

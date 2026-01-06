@@ -12,8 +12,6 @@ namespace Shared
     public class TicketResultDto
     {
         [Required]
-        public int Id { get; set; }
-        [Required]
         [StringLength(100, MinimumLength = 5)]
         public string Title { get; set; }
 
@@ -38,4 +36,5 @@ namespace Shared
 
 
     }
+
 }
