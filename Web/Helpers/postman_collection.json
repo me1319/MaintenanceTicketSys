@@ -1,0 +1,147 @@
+{
+	"info": {
+		"_postman_id": "78245b85-5e71-41b3-bfcc-6a5fbd2f4c8d",
+		"name": "Maintenance Ticket System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "49079459",
+		"_collection_link": "https://memenna8-6804248.postman.co/workspace/mohamed-esam-abdelshafi's-Works~ddfb1b91-b548-4eb9-8eda-82e99c985975/collection/49079459-78245b85-5e71-41b3-bfcc-6a5fbd2f4c8d?action=share&source=collection_link&creator=49079459"
+	},
+	"item": [
+		{
+			"name": "AddTicket",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"First Ticket\",\r\n  \"description\": \"printer not working\",\r\n  \"priority\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5181/api/tickets",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5181",
+					"path": [
+						"api",
+						"tickets"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetAllTickets",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "AddComment",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "\"Add comment to ticket here\"",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5181/api/tickets/1/comments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5181",
+					"path": [
+						"api",
+						"tickets",
+						"1",
+						"comments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AddAttatchments",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"fileName\": \"placeholder.txt\",\r\n  \"fileType\": \"text/plain\",\r\n  \"filePath\": \"/path/to/placeholder.txt\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5181/api/tickets/10/attachments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5181",
+					"path": [
+						"api",
+						"tickets",
+						"10",
+						"attachments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AssignToEngineer",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"fileName\": \"placeholder.txt\",\r\n  \"fileType\": \"text/plain\",\r\n  \"filePath\": \"/path/to/placeholder.txt\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5181/api/tickets/2/assign?engineerId=5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5181",
+					"path": [
+						"api",
+						"tickets",
+						"2",
+						"assign"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "engineerId",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
