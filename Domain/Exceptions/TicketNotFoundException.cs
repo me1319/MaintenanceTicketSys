@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Domain.Exceptions
 {
-    public class InvalidTicketStatusException : BadRequestException
+    public class TicketNotFoundException : NotFoundException
     {
-        public InvalidTicketStatusException(string message)
-            : base(message)
+        public TicketNotFoundException(int id)
+            : base($"Ticket with id {id} not found")
         {
         }
     }

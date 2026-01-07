@@ -1,13 +1,17 @@
 
 using AutoMapper;
 using Domain.Contracts;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence;
 using Persistence.Data;
 using Services;
 using Services.Abstraction;
+using Shared.ErrorModels;
 using System;
+using Web.Helpers;
+using Web.Middlewares;
 using Mapping =Services.MappingProfile;
 
 namespace Web
@@ -22,7 +26,28 @@ namespace Web
 
             builder.Services.AddControllers()
                             .AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly);
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+            builder.Services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = context =>
+                {
+                    var errors = context.ModelState
+                        .Where(x => x.Value.Errors.Count > 0)
+                        .SelectMany(x => x.Value.Errors)
+                        .Select(e => ModelStateErrorHelper.NormalizeModelError(e.ErrorMessage))
+                        .ToList();
+
+                    var response = new ErrorDetails
+                    {
+                        StatusCode = StatusCodes.Status400BadRequest,
+                        ErrorMassage = "Validation Error",
+                        Errors = errors
+                    };
+
+                    return new BadRequestObjectResult(response);
+                };
+            });
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
@@ -50,7 +75,7 @@ namespace Web
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            app.UseMiddleware<GlobalErrorHandlingMiddleware>();
             app.UseHttpsRedirection();
 
             app.UseAuthorization();

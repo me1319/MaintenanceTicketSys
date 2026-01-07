@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 
 namespace Domain.Exceptions
 {
-    public class InvalidTicketStatusException : BadRequestException
+    public abstract class AppException : Exception
     {
-        public InvalidTicketStatusException(string message)
+        public int StatusCode { get; }
+
+        protected AppException(string message, int statusCode)
             : base(message)
         {
+            StatusCode = statusCode;
         }
     }
 }

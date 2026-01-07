@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Domain.Contracts;
+using Domain.Exceptions;
 using Domain.Models.Entities;
 using Domain.Models.Enums;
 using Services.Abstraction;
@@ -23,9 +24,22 @@ namespace Services
             _mapper = mapper;
         }
 
-        // 1️⃣ Create Ticket
         public async Task<int> CreateTicketAsync(CreateTicketDto dto)
         {
+            var errors = new List<string>();
+
+            if (string.IsNullOrWhiteSpace(dto.Title))
+                errors.Add("Ticket title is required");
+
+            if (string.IsNullOrWhiteSpace(dto.Description))
+                errors.Add("Ticket description is required");
+
+            if (!Enum.IsDefined(typeof(TicketPriority), dto.Priority))
+                errors.Add("Invalid ticket priority");
+
+            if (errors.Any())
+                throw new DomainValidationException(errors);
+
             var ticket = new Ticket
             {
                 Title = dto.Title,
@@ -41,13 +55,14 @@ namespace Services
             return ticket.Id;
         }
 
-        // 2️⃣ Assign Engineer
+
         public async Task AssignEngineerAsync(int ticketId, int engineerId)
         {
             var ticket = await GetTicketEntity(ticketId);
 
             if (ticket.Status == TicketStatus.Closed)
-                throw new InvalidOperationException("Cannot change engineer after ticket is closed.");
+                throw new InvalidTicketStatusException(
+                    "Cannot change engineer after ticket is closed.");
 
             ticket.AssignedEngineerId = engineerId;
 
@@ -55,17 +70,17 @@ namespace Services
             await _unitOfWork.SaveChangesAsync();
         }
 
-        // 3️⃣ Change Status + 4️⃣ Track timestamps
         public async Task ChangeStatusAsync(int ticketId, TicketStatus newStatus)
         {
             var ticket = await GetTicketEntity(ticketId);
 
             if (newStatus < ticket.Status)
-                throw new InvalidOperationException("Invalid status transition.");
+                throw new InvalidTicketStatusException("Invalid status transition.");
 
             if (newStatus == TicketStatus.Closed &&
-                ticket.Status != TicketStatus.Resolved)
-                throw new InvalidOperationException("Ticket must be resolved before closing.");
+           ticket.Status != TicketStatus.Resolved)
+                throw new InvalidTicketStatusException(
+                    "Ticket must be resolved before closing.");
 
             ticket.Status = newStatus;
 
@@ -88,10 +103,17 @@ namespace Services
             await _unitOfWork.SaveChangesAsync();
         }
 
-        // 5️⃣ Add Comment
         public async Task AddCommentAsync(int ticketId, string content)
         {
-            await GetTicketEntity(ticketId);
+            if (string.IsNullOrWhiteSpace(content))
+                throw new DomainValidationException(
+                    new[] { "Comment content is required" });
+
+            var ticket = await GetTicketEntity(ticketId);
+
+            if (ticket.Status == TicketStatus.Closed)
+                throw new InvalidTicketStatusException(
+                    "Cannot add comment to a closed ticket");
 
             var comment = new TicketComment
             {
@@ -103,7 +125,6 @@ namespace Services
             await _unitOfWork.SaveChangesAsync();
         }
 
-        // 5️⃣ Add Attachment (metadata)
         public async Task AddAttachmentAsync(int ticketId, CreateAttachmentDto dto)
         {
             await GetTicketEntity(ticketId);
@@ -120,7 +141,7 @@ namespace Services
             await _unitOfWork.SaveChangesAsync();
         }
 
-        // Reads
+      
         public async Task<IEnumerable<TicketResultDto>> GetAllTicketsAsync()
         {
             var tickets = await _unitOfWork.GetRepository<Ticket, int>().GetAllAsync();
@@ -131,6 +152,13 @@ namespace Services
         {
             var ticket = await _unitOfWork.GetRepository<Ticket, int>().GetAsync(id);
             return ticket == null ? null : _mapper.Map<TicketResultDto>(ticket);
+        }
+        private async Task<Ticket> GetTicketEntity(int id)
+        {
+            var ticket = await _unitOfWork.GetRepository<Ticket, int>().GetAsync(id);
+            if (ticket == null)
+                throw new TicketNotFoundException(id);
+            return ticket;
         }
 
         public async Task<IEnumerable<AttachmentResultDto>> GetAllAttachmentsAsync()
@@ -145,14 +173,7 @@ namespace Services
             return _mapper.Map<IEnumerable<CommentResultDto>>(comments);
         }
 
-        // 🔒 Helper
-        private async Task<Ticket> GetTicketEntity(int id)
-        {
-            var ticket = await _unitOfWork.GetRepository<Ticket, int>().GetAsync(id);
-            if (ticket == null)
-                throw new KeyNotFoundException("Ticket not found");
-            return ticket;
-        }
+
     }
 
 
